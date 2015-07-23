@@ -16,8 +16,5 @@ class Client(object):
 
     def list_streams(self, marker=None, limit=None):
         res = api.get_stream_list(self.__auth__, hub=self.__hub__, marker=marker, limit=limit)
-        items = []
-        for data in res["items"]:
-            items.append(Stream(self.__auth__, stream_id=data["id"]))
-        res["items"] = items
+        res["items"] = [Stream(self.__auth__, stream_id=data["id"]) for data in res["items"]] if res["items"] else []
         return res
