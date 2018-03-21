@@ -2,6 +2,8 @@
 
 import pili.api as api
 from .stream import Stream
+from conf import API_HOST, API_VERSION
+from utils import normalize_path
 
 
 class Hub(object):
@@ -52,13 +54,15 @@ class Hub(object):
         return res["items"]
 
     def bandwidth_count_now(self):
-        res = api.bandwidth_count_now(self.__auth__, hub=self.__hub__)
-        return res
+        url = "http://%s/%s/hubs/%s/stat/play" % (API_HOST, API_VERSION, self.__hub__)
+        return api._get(url, self.__auth__)
 
-    def bandwidth_count_history(self, start, end, limit=None, marker=None):
-        res = api.bandwidth_count_history(self.__auth__, hub=self.__hub__, start=start, end=end, limit=limit,
-                                          marker=marker)
-        return res
+    def bandwidth_count_history(self, **kwargs):
+        url = "http://%s/%s/hubs/%s/stat/play/history?" % (API_HOST, API_VERSION, self.__hub__)
+        keyword = ['start', 'end', 'limit', 'marker']
+        url = normalize_path(kwargs, keyword, url)
+
+        return api._get(url=url, auth=self.__auth__)
 
     def bandwidth_count_detail(self, time):
         res = api.bandwidth_count_detail(self.__auth__, hub=self.__hub__, time=time)

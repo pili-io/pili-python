@@ -3,12 +3,12 @@
 from pili import Mac, Hub
 
 # 替换成自己 Qiniu 账号的 AccessKey
-access_key = "Y93_QIW2j-Bw84R7M07Mnno0re7TcEFq1InWpc9J"
+access_key = "..."
 
 # 替换成自己 Qiniu 账号的 SecretKey
-secret_key = "BVclqX13x3uhr099JXcrfZS__wyF2fUnBFW4Kj5G"
+secret_key = "..."
 
-hub_name = 'berniezhibo'
+hub_name = '...'
 
 stream_name = '123'
 
@@ -18,7 +18,7 @@ hub = Hub(mac, hub_name)
 
 stream = hub.get(stream_name)
 
-resp = stream.history(start_second=3123123, end_second=3123123123)
+resp = stream.history(start=1513616430, end=1513616400)
 
 print(resp.status_code)
 print(resp.headers)

@@ -154,7 +154,7 @@ def bandwidth_count_now(hub):
 def bandwidth_count_history(hub, **kwargs):
     keyword = ['start', 'end', 'limit', 'marker']
     args = normalize(kwargs, keyword)
-    url = "http://%s/%s/hubs/%s/stat/play/history" % (conf.API_HOST, conf.API_VERSION, hub)
+    url = "http://%s/%s/hubs/%s/stat/play/history?" % (conf.API_HOST, conf.API_VERSION, hub)
     for k, v in args.items():
         url += "&%s=%s" % (k, v)
     return Request(url=url)

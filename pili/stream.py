@@ -5,6 +5,7 @@ import time
 from base64 import urlsafe_b64encode
 import pili.api as api
 import conf
+from utils import normalize_path
 
 
 class Stream(object):
@@ -76,19 +77,17 @@ class Stream(object):
     """
     history 查询直播历史
     输入参数:
-        start_second: Unix时间戳，起始时间，可选，默认不限制起始时间
-        end_second: Unix时间戳，结束时间，可选，默认为当前时间
+        start: Unix时间戳，起始时间，可选，默认不限制起始时间
+        end: Unix时间戳，结束时间，可选，默认为当前时间
     返回值: 如下结构的数组
         start: Unix时间戳，直播开始时间
         end: Unix时间戳，直播结束时间
     """
-    def history(self, start_second=None, end_second=None):
+    def history(self, **kwargs):
         key = urlsafe_b64encode(self.key)
+        keyword = ['start', 'end']
         url = "http://{0}/{1}/hubs/{2}/streams/{3}/historyactivity?".format(conf.API_HOST, conf.API_VERSION, self.hub, key)
-        if start_second:
-            url += "&start={}".format(start_second)
-        if end_second:
-            url += "&end={}".format(end_second)
+        url = normalize_path(kwargs, keyword, url)
         return api._get(url, self.__auth__)
 
     # save_as等同于saveas接口，出于兼容考虑，暂时保留
@@ -98,8 +97,8 @@ class Stream(object):
     """
     saveas 保存直播回放到存储空间
     输入参数:
-        start_second: Unix时间戳，起始时间，可选，默认不限制起始时间
-        end_second: Unix时间戳，结束时间，可选，默认为当前时间
+        start: Unix时间戳，起始时间，可选，默认不限制起始时间
+        end: Unix时间戳，结束时间，可选，默认为当前时间
         fname: 保存的文件名，可选，不指定会随机生产
         format: 保存的文件格式，可选，默认为m3u8，如果指定其他格式则保存动作为异步模式
         pipeline: dora的私有队列，可选，不指定则使用默认队列
@@ -144,7 +143,6 @@ class Stream(object):
     返回值: 无
     """
     def update_converts(self, profiles=[]):
-        # res = api.update_stream_converts(self.__auth__, hub=self.hub, key=self.key, profiles=profiles)
         key = urlsafe_b64encode(self.key)
         url = "http://%s/%s/hubs/%s/streams/%s/converts" % (conf.API_HOST, conf.API_VERSION, self.hub, key)
         encoded_data = json.dumps({"converts": profiles})

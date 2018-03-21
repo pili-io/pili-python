@@ -55,3 +55,17 @@ def s(data):
 def urlsafe_base64_encode(data):
     ret = base64.urlsafe_b64encode(b(data))
     return s(ret)
+
+
+def normalize_path(args, keyword, url):
+    if set(args) - set(keyword):
+        raise ValueError('invalid key')
+    for k, v in args.items():
+        if v is None:
+            del args[k]
+    path = ''
+    for k, v in args.items():
+        path += "&%s=%s" % (k, v)
+    if path:
+        url = url + '?' + path
+    return url
