@@ -14,11 +14,11 @@ mac = Mac(access_key, secret_key)
 
 hub = Hub(mac, hub_name)
 
-resp = hub.bandwidth_count_now()
-
+# resp = hub.bandwidth_count_now()
+#
 # resp = hub.bandwidth_count_detail(1512616339)
 
-# resp = hub.bandwidth_count_history()
+resp = hub.bandwidth_count_history(start=1512616339, end=1512616400, limit=100, marker=None)
 
 print(resp.status_code)
 print(resp.headers)

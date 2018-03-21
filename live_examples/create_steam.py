@@ -16,4 +16,9 @@ mac = Mac(access_key, secret_key)
 
 hub = Hub(mac, hub_name)
 
-hub.create(stream_name)
+resp = hub.create(stream_name)
+
+
+print(resp.status_code)
+print(resp.headers)
+print(resp.text)

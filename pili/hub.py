@@ -61,9 +61,9 @@ class Hub(object):
         url = "http://%s/%s/hubs/%s/stat/play/history?" % (API_HOST, API_VERSION, self.__hub__)
         keyword = ['start', 'end', 'limit', 'marker']
         url = normalize_path(kwargs, keyword, url)
-
         return api._get(url=url, auth=self.__auth__)
 
     def bandwidth_count_detail(self, time):
-        res = api.bandwidth_count_detail(self.__auth__, hub=self.__hub__, time=time)
-        return res
+        url = "http://%s/%s/hubs/%s/stat/play/history/detail?time=%s" % (API_HOST, API_VERSION, self.__hub__, time)
+        return api._get(url, self.__auth__)
+
