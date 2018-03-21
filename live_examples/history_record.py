@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import pili
+from pili import Mac, Hub
 
 # 替换成自己 Qiniu 账号的 AccessKey
 access_key = "..."
@@ -12,11 +12,16 @@ secret_key = "..."
 
 hub_name = '...'
 
-stream_name = '...'
+stream_name = '123'
 
-mac = pili.Mac(access_key, secret_key)
-client = pili.Client(mac)
-hub = client.hub(hub_name)
+mac = Mac(access_key, secret_key)
+
+hub = Hub(mac, hub_name)
+
 stream = hub.get(stream_name)
 
-print(stream.history(start_second=0, end_second=0))
+resp = stream.history(start_second=0, end_second=0)
+
+print(resp.status_code)
+print(resp.headers)
+print(resp.text)

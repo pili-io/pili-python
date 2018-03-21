@@ -2,8 +2,9 @@
 
 import json
 import time
-
+from base64 import urlsafe_b64encode
 import pili.api as api
+import conf
 
 
 class Stream(object):
@@ -82,8 +83,15 @@ class Stream(object):
         end: Unix时间戳，直播结束时间
     """
     def history(self, start_second=None, end_second=None):
-        res = api.get_history(self.__auth__, hub=self.hub, key=self.key, start=start_second, end=end_second)
-        return res["items"]
+        # res = api.get_history(self.__auth__, hub=self.hub, key=self.key, start=start_second, end=end_second)
+
+        key = urlsafe_b64encode(self.key)
+        url = "http://{0}/{1}/hubs/{2}/streams/{3}/historyactivity?".format(conf.API_HOST, conf.API_VERSION, self.hub, key)
+        if start_second != None:
+            url += "&start={}".format(start_second)
+        if end_second != None:
+            url += "&end={}".format(end_second)
+        return api._get(url, self.__auth__)
 
     # save_as等同于saveas接口，出于兼容考虑，暂时保留
     def save_as(self, start_second=None, end_second=None, **kwargs):

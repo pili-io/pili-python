@@ -31,6 +31,25 @@ class Auth(object):
         encoded = __hmac_sha1__(raw_str, self.secret_key)
         return 'Qiniu {0}:{1}'.format(self.access_key, encoded)
 
+    def authed(self, method, url, body=None):
+        headers = {}
+
+        parsed = urlparse(url)
+        raw_str = '%s %s' % (method, parsed.path)
+        if parsed.query:
+            raw_str += '?%s' % parsed.query
+        raw_str += '\nHost: %s' % parsed.netloc
+        if body:
+            raw_str += '\nContent-Type: application/json'
+            raw_str += "\n\n"
+            raw_str += body
+            headers.update({'Content-Type': 'application/json'})
+        else:
+            raw_str += "\n\n"
+        headers.update({'Authorization': self.auth_interface_str(raw_str)})
+        headers.update({'User-Agent': conf.API_USERAGENT})
+        return headers
+
 
 def auth_interface(method):
     """
@@ -48,6 +67,7 @@ def auth_interface(method):
         send request and decode response. Return the result in python format.
         """
         req = method(**args)
+
         parsed = urlparse(req.get_full_url())
         raw_str = '%s %s' % (req.get_method(), parsed.path)
         if parsed.query:

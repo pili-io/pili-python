@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import pili
+from pili import Mac, Hub, rtmp_play_url, rtmp_publish_url, hdl_play_url, hls_play_url, snapshot_play_url
 
 # 替换成自己 Qiniu 账号的 AccessKey
 access_key = "..."
@@ -12,25 +12,23 @@ domain = '...'
 
 hub_name = '...'
 
-stream_title = '...'
+stream_name = '...'
 
 expire = 3600
 
-mac = pili.Mac(access_key, secret_key)
-client = pili.Client(mac)
+mac = Mac(access_key, secret_key)
 
-hub = client.hub(hub_name)
+hub = Hub(mac, hub_name)
 
-
-stream = hub.get("...")
+stream = hub.get(stream_name)
 
 
-print pili.rtmp_publish_url(domain, hub_name, stream_title, mac, expire)
+print rtmp_publish_url(domain, hub_name, stream_name, mac, expire)
 
-print pili.rtmp_play_url(domain, hub_name, stream_title)
+print rtmp_play_url(domain, hub_name, stream_name)
 
-print pili.hls_play_url(domain, hub_name, stream_title)
+print hls_play_url(domain, hub_name, stream_name)
 
-print pili.hdl_play_url(domain, hub_name, stream_title)
+print hdl_play_url(domain, hub_name, stream_name)
 
-print pili.snapshot_play_url(domain, hub_name, stream_title)
+print snapshot_play_url(domain, hub_name, stream_name)

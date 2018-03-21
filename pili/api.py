@@ -1,8 +1,10 @@
 from .auth import auth_interface
 import pili.conf as conf
-from urllib2 import Request
+from requests import Request
+import requests
 import json
 import base64
+from compat import urlparse
 
 
 def normalize(args, keyword):
@@ -119,6 +121,7 @@ def stream_snapshot(hub, key, **kwargs):
     return Request(url=url, data=encoded)
 
 
+
 @auth_interface
 def get_history(hub, key, **kwargs):
     keyword = ['start', 'end']
@@ -127,7 +130,10 @@ def get_history(hub, key, **kwargs):
     url = "http://%s/%s/hubs/%s/streams/%s/historyactivity?" % (conf.API_HOST, conf.API_VERSION, hub, key)
     for k, v in args.items():
         url += "&%s=%s" % (k, v)
-    return Request(url=url)
+    r = Request(url=url)
+    print r.url
+
+    # return requests.get(url=url)
 
 
 @auth_interface
@@ -158,3 +164,10 @@ def bandwidth_count_history(hub, **kwargs):
 def bandwidth_count_detail(hub, time):
     url = "http://%s/%s/hubs/%s/stat/play/history/detail?time=%s" % (conf.API_HOST, conf.API_VERSION, hub, time)
     return Request(url=url)
+
+
+def _get(url, auth):
+
+    hearders = auth.authed("GET", url)
+    return requests.get(url=url, headers=hearders)
+
