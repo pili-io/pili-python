@@ -37,7 +37,9 @@ class Stream(object):
 
     # refresh 主动更新流信息，会产生一次rpc调用
     def refresh(self):
-        data = api.get_stream(self.__auth__, hub=self.hub, key=self.key)
+        key = urlsafe_b64encode(self.key)
+        url = "http://%s/%s/hubs/%s/streams/%s" % (conf.API_HOST, conf.API_VERSION, self.hub, key)
+        data = api._get(url=url, auth=self.__auth__)
         self.__data__ = {}
         for p in ["disabledTill", "converts"]:
             self.__data__[p] = data[p] if p in data else None

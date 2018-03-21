@@ -69,3 +69,11 @@ def normalize_path(args, keyword, url):
     if path:
         url = url + '?' + path
     return url
+
+def normalize_data(args, keyword):
+    if set(args) - set(keyword):
+        raise ValueError('invalid key')
+    for k, v in args.items():
+        if v is None:
+            del args[k]
+    return json.dumps(args)

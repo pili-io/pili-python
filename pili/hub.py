@@ -3,8 +3,8 @@
 import pili.api as api
 from .stream import Stream
 from conf import API_HOST, API_VERSION
-from utils import normalize_path
-
+from utils import normalize_path, normalize_data
+import json
 
 class Hub(object):
     def __init__(self, mac, hub):
@@ -12,9 +12,12 @@ class Hub(object):
         self.__hub__ = hub
 
     # create 创建一路流
-    def create(self, key):
-        api.create_stream(self.__auth__, hub=self.__hub__, key=key)
-        return Stream(self.__auth__, hub=self.__hub__, key=key)
+    def create(self, **kwargs):
+        keyword = ['key']
+        url = "http://%s/%s/hubs/%s/streams" % (API_HOST, API_VERSION, self.__hub__)
+        encoded = normalize_data(kwargs, keyword)
+        return api._post(url=url, auth=self.__auth__, data=encoded)
+
 
     # 获取一路流
     def get(self, key):
