@@ -83,13 +83,11 @@ class Stream(object):
         end: Unix时间戳，直播结束时间
     """
     def history(self, start_second=None, end_second=None):
-        # res = api.get_history(self.__auth__, hub=self.hub, key=self.key, start=start_second, end=end_second)
-
         key = urlsafe_b64encode(self.key)
         url = "http://{0}/{1}/hubs/{2}/streams/{3}/historyactivity?".format(conf.API_HOST, conf.API_VERSION, self.hub, key)
-        if start_second != None:
+        if start_second:
             url += "&start={}".format(start_second)
-        if end_second != None:
+        if end_second:
             url += "&end={}".format(end_second)
         return api._get(url, self.__auth__)
 
@@ -146,8 +144,12 @@ class Stream(object):
     返回值: 无
     """
     def update_converts(self, profiles=[]):
-        res = api.update_stream_converts(self.__auth__, hub=self.hub, key=self.key, profiles=profiles)
-        return res
+        # res = api.update_stream_converts(self.__auth__, hub=self.hub, key=self.key, profiles=profiles)
+        key = urlsafe_b64encode(self.key)
+        url = "http://%s/%s/hubs/%s/streams/%s/converts" % (conf.API_HOST, conf.API_VERSION, self.hub, key)
+        encoded_data = json.dumps({"converts": profiles})
+        return api._post(url, self.__auth__, data=encoded_data)
+
 
     def to_json(self):
         return json.dumps(self.data)

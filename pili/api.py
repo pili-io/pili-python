@@ -167,7 +167,11 @@ def bandwidth_count_detail(hub, time):
 
 
 def _get(url, auth):
-
     hearders = auth.authed("GET", url)
     return requests.get(url=url, headers=hearders)
+
+
+def _post(url, auth, data):
+    hearders = auth.authed("POST", url, body=data)
+    return requests.post(url=url, headers=hearders, data=data)
 
