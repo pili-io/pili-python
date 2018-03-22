@@ -12,7 +12,7 @@ access_key = "..."
 # 替换成自己 Qiniu 账号的 SecretKey
 secret_key = "..."
 
-hub_name = 'berniezhibo'
+hub_name = '...'
 
 stream_name = "..."
 
