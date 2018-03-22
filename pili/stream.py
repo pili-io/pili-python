@@ -5,7 +5,7 @@ import time
 from base64 import urlsafe_b64encode
 import pili.api as api
 import conf
-from utils import normalize_path
+from utils import normalize_path, normalize_data
 
 
 class Stream(object):
@@ -113,15 +113,13 @@ class Stream(object):
         fname: 保存到存储空间的文件名
         persistentID: 异步模式时，持久化异步处理任务ID，通常用不到该字段
     """
-    def saveas(self, start_second=None, end_second=None, **kwargs):
-        kwargs["hub"] = self.hub
-        kwargs["key"] = self.key
-        if start_second is not None:
-            kwargs["start"] = start_second
-        if end_second is not None:
-            kwargs["end"] = end_second
-        res = api.stream_saveas(self.__auth__, **kwargs)
-        return res
+    def saveas(self, **kwargs):
+        key = urlsafe_b64encode(self.key)
+        url = "http://%s/%s/hubs/%s/streams/%s/saveas" % (conf.API_HOST, conf.API_VERSION, self.hub, key)
+        keyword = ['start', 'end', 'fname', 'format', 'pipeline', 'notify', 'expireDays']
+        encoded_data = normalize_data(kwargs, keyword)
+        return api._post(url, self.__auth__, data=encoded_data)
+
 
     """
     snapshot 保存直播截图到存储空间

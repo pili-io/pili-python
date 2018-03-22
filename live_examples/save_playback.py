@@ -2,18 +2,17 @@
 
 from pili import Mac, Hub
 
+# 替换成自己 Qiniu 账号的 AccessKey
 access_key = "..."
-
 
 # 替换成自己 Qiniu 账号的 SecretKey
 secret_key = "..."
 
+hub_name = '...'
 
-hub_name = "..."
+stream_name = "123"
 
-stream_name = "..."
-
-fname = 'example_fname.mp4'
+fname = 'example_fname.m3u8'
 
 mac = Mac(access_key, secret_key)
 
@@ -21,4 +20,8 @@ hub = Hub(mac, hub_name)
 
 stream = hub.get(stream_name)
 
-print(stream.saveas(start_second=0, end_second=0, format='mp4', fname=fname))
+resp = stream.saveas(start=0, end=0, format='m3u8', fname=fname)
+
+print(resp.status_code)
+print(resp.headers)
+print(resp.text)
