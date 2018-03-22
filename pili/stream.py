@@ -49,9 +49,10 @@ class Stream(object):
 
     # disable 禁用流，till Unix时间戳，在这之前流均不可用
     def disable(self, till=None):
-        if till is None:
-            till = -1
-        return api.disable_stream(self.__auth__, hub=self.hub, key=self.key, till=till)
+        key = urlsafe_b64encode(self.key)
+        url = "http://%s/%s/hubs/%s/streams/%s/disabled" % (conf.API_HOST, conf.API_VERSION, self.hub, key)
+        encoded = json.dumps({"disabledTill": till})
+        return api._post(url=url, data=encoded, auth=self.__auth__)
 
     # disabled 判断流是否被禁用
     def disabled(self):
