@@ -56,8 +56,10 @@ class Hub(object):
             data: 正整数，数据帧率
     """
     def batch_live_status(self, streams):
-        res = api.batch_live_status(self.__auth__, hub=self.__hub__, streams=streams)
-        return res["items"]
+        encoded = json.dumps({"items": streams})
+        url = "http://%s/%s/hubs/%s/livestreams?" % (API_HOST, API_VERSION, self.__hub__)
+        return api._post(url=url, auth=self.__auth__, data=encoded)
+
 
     def bandwidth_count_now(self):
         url = "http://%s/%s/hubs/%s/stat/play" % (API_HOST, API_VERSION, self.__hub__)

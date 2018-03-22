@@ -73,8 +73,9 @@ class Stream(object):
             data: 正整数，数据帧率
     """
     def status(self):
-        res = api.get_status(self.__auth__, hub=self.hub, key=self.key)
-        return res
+        key = urlsafe_b64encode(self.key)
+        url = "http://%s/%s/hubs/%s/streams/%s/live" % (conf.API_HOST, conf.API_VERSION, self.hub, key)
+        return api._get(url=url, auth=self.__auth__)
 
     """
     history 查询直播历史
@@ -114,10 +115,11 @@ class Stream(object):
         persistentID: 异步模式时，持久化异步处理任务ID，通常用不到该字段
     """
     def saveas(self, **kwargs):
-        key = urlsafe_b64encode(self.key)
         url = "http://%s/%s/hubs/%s/streams/%s/saveas" % (conf.API_HOST, conf.API_VERSION, self.hub, key)
+
         keyword = ['start', 'end', 'fname', 'format', 'pipeline', 'notify', 'expireDays']
         encoded_data = normalize_data(kwargs, keyword)
+        key = urlsafe_b64encode(self.key)
         return api._post(url, self.__auth__, data=encoded_data)
 
 
