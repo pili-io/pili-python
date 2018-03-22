@@ -4,7 +4,7 @@ import json
 import time
 from base64 import urlsafe_b64encode
 import pili.api as api
-import conf
+from conf import API_HOST, API_VERSION
 from utils import normalize_path, normalize_data
 
 
@@ -38,7 +38,7 @@ class Stream(object):
     # refresh 主动更新流信息，会产生一次rpc调用
     def refresh(self):
         key = urlsafe_b64encode(self.key)
-        url = "http://%s/%s/hubs/%s/streams/%s" % (conf.API_HOST, conf.API_VERSION, self.hub, key)
+        url = "http://%s/%s/hubs/%s/streams/%s" % (API_HOST, API_VERSION, self.hub, key)
         data = api._get(url=url, auth=self.__auth__)
         self.__data__ = {}
         for p in ["disabledTill", "converts"]:
@@ -50,7 +50,7 @@ class Stream(object):
     # disable 禁用流，till Unix时间戳，在这之前流均不可用
     def disable(self, till=None):
         key = urlsafe_b64encode(self.key)
-        url = "http://%s/%s/hubs/%s/streams/%s/disabled" % (conf.API_HOST, conf.API_VERSION, self.hub, key)
+        url = "http://%s/%s/hubs/%s/streams/%s/disabled" % (API_HOST, API_VERSION, self.hub, key)
         encoded = json.dumps({"disabledTill": till})
         return api._post(url=url, data=encoded, auth=self.__auth__)
 
@@ -75,7 +75,7 @@ class Stream(object):
     """
     def status(self):
         key = urlsafe_b64encode(self.key)
-        url = "http://%s/%s/hubs/%s/streams/%s/live" % (conf.API_HOST, conf.API_VERSION, self.hub, key)
+        url = "http://%s/%s/hubs/%s/streams/%s/live" % (API_HOST, API_VERSION, self.hub, key)
         return api._get(url=url, auth=self.__auth__)
 
     """
@@ -90,7 +90,7 @@ class Stream(object):
     def history(self, **kwargs):
         key = urlsafe_b64encode(self.key)
         keyword = ['start', 'end']
-        url = "http://{0}/{1}/hubs/{2}/streams/{3}/historyactivity?".format(conf.API_HOST, conf.API_VERSION, self.hub, key)
+        url = "http://{0}/{1}/hubs/{2}/streams/{3}/historyactivity?".format(API_HOST, API_VERSION, self.hub, key)
         url = normalize_path(kwargs, keyword, url)
         return api._get(url, self.__auth__)
 
@@ -116,13 +116,12 @@ class Stream(object):
         persistentID: 异步模式时，持久化异步处理任务ID，通常用不到该字段
     """
     def saveas(self, **kwargs):
-        url = "http://%s/%s/hubs/%s/streams/%s/saveas" % (conf.API_HOST, conf.API_VERSION, self.hub, key)
+        url = "http://%s/%s/hubs/%s/streams/%s/saveas" % (API_HOST, API_VERSION, self.hub, self.key)
 
         keyword = ['start', 'end', 'fname', 'format', 'pipeline', 'notify', 'expireDays']
         encoded_data = normalize_data(kwargs, keyword)
         key = urlsafe_b64encode(self.key)
         return api._post(url, self.__auth__, data=encoded_data)
-
 
     """
     snapshot 保存直播截图到存储空间
@@ -134,10 +133,11 @@ class Stream(object):
         fname: 保存到存储空间的文件名
     """
     def snapshot(self, **kwargs):
-        kwargs["hub"] = self.hub
-        kwargs["key"] = self.key
-        res = api.stream_snapshot(self.__auth__, **kwargs)
-        return res
+        keyword = ['time', 'fname', 'format']
+        encoded_data = normalize_data(kwargs, keyword)
+        key = urlsafe_b64encode(self.key)
+        url = "http://%s/%s/hubs/%s/streams/%s/snapshot" % (API_HOST, API_VERSION, self.hub, key)
+        return api._post(url, self.__auth__, data=encoded_data)
 
     """
     update_converts 更改流的转码规格
@@ -147,7 +147,7 @@ class Stream(object):
     """
     def update_converts(self, profiles=[]):
         key = urlsafe_b64encode(self.key)
-        url = "http://%s/%s/hubs/%s/streams/%s/converts" % (conf.API_HOST, conf.API_VERSION, self.hub, key)
+        url = "http://%s/%s/hubs/%s/streams/%s/converts" % (API_HOST, API_VERSION, self.hub, key)
         encoded_data = json.dumps({"converts": profiles})
         return api._post(url, self.__auth__, data=encoded_data)
 
