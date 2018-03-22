@@ -35,8 +35,11 @@ class Hub(object):
         marker: 这次遍历得到的游标，下次请求应该带上，如果为""，则表示已遍历完所有流
     """
     def list(self, **kwargs):
-        res = api.get_stream_list(self.__auth__, hub=self.__hub__, **kwargs)
-        return res
+        url = "http://%s/%s/hubs/%s/streams?" % (API_HOST, API_VERSION, self.__hub__)
+        keyword = ['liveonly', 'prefix', 'limit', 'marker']
+        url = normalize_path(kwargs, keyword, url)
+        return api._get(url=url, auth=self.__auth__)
+
 
     """
     batch_live_status 批量查询流的直播信息
