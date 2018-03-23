@@ -5,7 +5,7 @@ import random
 import time
 import unittest
 
-import pili
+from pili import Mac, Hub
 
 
 def env(key):
@@ -24,18 +24,18 @@ class TestStreamCases(unittest.TestCase):
         if access_key == "" or secret_key == "":
             raise unittest.SkipTest("need set access_key or secret_key")
         if env("PILI_API_HOST") != "":
-            pili.conf.API_HOST = env("PILI_API_HOST")
-        client = pili.Client(pili.Mac(access_key, secret_key))
-        self.hub = client.hub(hub_name)
+            API_HOST = env("PILI_API_HOST")
+        mac = Mac(access_key, secret_key)
+        self.hub = Hub(mac, hub_name)
         self.stream_title = "streamTest" + str(int(random.random()*1e10))
 
     def test_stream_create(self):
-        stream = self.hub.create(self.stream_title)
+        stream = self.hub.create(key=self.stream_title)
         self.assertEqual(stream.hub, "PiliSDKTest")
         self.assertEqual(stream.key, self.stream_title)
 
     def test_stream_disable(self):
-        stream = self.hub.create(self.stream_title)
+        stream = self.hub.create(key=self.stream_title)
         self.assertFalse(stream.disabled())
         stream.disable()
         stream = stream.refresh()
@@ -48,7 +48,7 @@ class TestStreamCases(unittest.TestCase):
         self.assertFalse(stream.disabled())
 
     def test_stream_converts(self):
-        stream = self.hub.create(self.stream_title)
+        stream = self.hub.create(key=self.stream_title)
         self.assertEqual(len(stream.converts), 0)
         stream.update_converts(["480p", "720p"])
         stream = stream.refresh()
