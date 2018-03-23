@@ -41,11 +41,11 @@ class Stream(object):
         url = "http://%s/%s/hubs/%s/streams/%s" % (API_HOST, API_VERSION, self.hub, key)
         data = api._get(url=url, auth=self.__auth__)
         self.__data__ = {}
-        for p in ["disabledTill", "converts"]:
-            self.__data__[p] = data[p] if p in data else None
+        for p in ["disabledTill", "converts", "createdAt", "updatedAt", "expireAt", "watermark", "converts"]:
+            self.__data__[p] = json.loads(data.text).get(p) if p in data.text else None
         self.__data__["key"] = self.key
         self.__data__["hub"] = self.hub
-        return self
+        return self.__data__
 
     # disable 禁用流，till Unix时间戳，在这之前流均不可用
     def disable(self, till=None):
@@ -53,14 +53,6 @@ class Stream(object):
         url = "http://%s/%s/hubs/%s/streams/%s/disabled" % (API_HOST, API_VERSION, self.hub, key)
         encoded = json.dumps({"disabledTill": till})
         return api._post(url=url, data=encoded, auth=self.__auth__)
-
-    # disabled 判断流是否被禁用
-    def disabled(self):
-        return self.disabledTill == -1 or self.disabledTill > int(time.time())
-
-    # enable 开启流
-    def enable(self):
-        return api.disable_stream(self.__auth__, hub=self.hub, key=self.key, till=0)
 
     """
     status 查询直播信息

@@ -4,6 +4,7 @@ import os
 import random
 import time
 import unittest
+import json
 
 from pili import Mac, Hub
 
@@ -36,16 +37,10 @@ class TestStreamCases(unittest.TestCase):
 
     def test_stream_disable(self):
         stream = self.hub.create(key=self.stream_title)
-        self.assertFalse(stream.disabled())
-        stream.disable()
-        stream = stream.refresh()
-        self.assertTrue(stream.disabled())
-        stream.disable(int(time.time()) + 1)
-        stream = stream.refresh()
-        self.assertTrue(stream.disabled())
-        time.sleep(2)
-        stream = stream.refresh()
-        self.assertFalse(stream.disabled())
+        self.assertEqual({}, json.loads(stream.disable(-1).text))
+        self.assertEqual(-1, stream.refresh().get("disabledTill"))
+        stream.disable(0)
+        self.assertEqual(0, stream.refresh().get("disabledTill"))
 
     def test_stream_converts(self):
         stream = self.hub.create(key=self.stream_title)

@@ -37,8 +37,12 @@ class TestHubCases(unittest.TestCase):
         self.assertEqual(items.status_code, 200)
         self.assertIn("test1", json.loads(items.text).get("items")[0].get("key"))
 
-    def test_create_strean(self):
-        items = self.hub.create(key="streamtest" + str(int(random.random()*1e10))+str(time.time())[:10])
+    def test_create_stream(self):
+        self.stream_key = "streamtest" + str(int(random.random()*1e10))+str(time.time())[:10]
+        items = self.hub.create(key=self.stream_key)
         self.assertEqual(items.status_code, 200)
         self.assertEqual({}, json.loads(items.text))
 
+    def test_query_streams(self):
+        items = self.hub.get("test1")
+        self.assertNotEqual(None, items)
