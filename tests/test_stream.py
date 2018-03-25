@@ -19,9 +19,9 @@ def env(key):
 class TestStreamCases(unittest.TestCase):
 
     def setUp(self):
-        hub_name = "PiliSDKTest"
-        access_key = env("QINIU_ACCESS_KEY")
-        secret_key = env("QINIU_SECRET_KEY")
+        hub_name = env("TEST_HUB")
+        access_key = env("access_key")
+        secret_key = env("secret_key")
         if access_key == "" or secret_key == "":
             raise unittest.SkipTest("need set access_key or secret_key")
         if env("PILI_API_HOST") != "":
@@ -70,16 +70,10 @@ class TestStreamCases(unittest.TestCase):
     # 这个测试需要维持推流test1
     def test_stream_snashot(self):
         stream = self.hub.get("test1")
-        ret = stream.snapshot()
-        self.assertTrue(ret["fname"])
         ret = stream.snapshot(fname="test1.jpg")
-        self.assertEqual(ret["fname"], "test1.jpg")
+        self.assertEqual(json.loads(ret.text)["fname"], "test1.jpg")
 
     # 这个测试需要维持推流test1
     def test_stream_history(self):
         stream = self.hub.get("test1")
-        now = int(time.time())
-        ret = stream.history(now - 86400, now)
-        self.assertTrue(len(ret) > 0)
-        self.assertTrue(ret[0]["start"] > 0)
-        self.assertTrue(ret[0]["end"] > 0)
+        self.assertEqual(200, stream.history().status_code)
