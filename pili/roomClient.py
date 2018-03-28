@@ -5,6 +5,8 @@ import time
 import pili.api as api
 from utils import urlsafe_base64_encode
 
+from conf import RTC_API_HOST
+
 
 class RoomClient(object):
     """docstring for RoomClient"""
@@ -12,17 +14,23 @@ class RoomClient(object):
         self.__credentials__ = credentials
         self.__auth__ = credentials.__auth__
 
-    def createRoom(self, ownerId, roomName=None, version='v2'):
-        res = api.create_room(self.__auth__, ownerId=ownerId, roomName=roomName, version=version)
-        return res
+    def create_room(self, ownerId, roomName=None, version='v2'):
+        params = {'owner_id': ownerId}
+        url = "http://%s/%s/rooms" % (RTC_API_HOST, version)
+        if bool(roomName):
+            params['room_name'] = roomName
+        encoded = json.dumps(params)
+        return api._post(url=url, auth=self.__auth__, data=encoded)
 
     def getRoom(self, roomName, version='v2'):
         res = api.get_room(self.__auth__, roomName=roomName, version=version)
         return res
 
     def deleteRoom(self, roomName, version='v2'):
-        res = api.delete_room(self.__auth__, roomName=roomName, version=version)
-        return res
+        url = "http://%s/%s/rooms/%s" % (RTC_API_HOST, version, roomName)
+        return api._delete(url=url, auth=self.__auth__)
+
+
 
     def getUser(self, roomName, version='v2'):
         res = api.get_user(self.__auth__, roomName=roomName, version=version)

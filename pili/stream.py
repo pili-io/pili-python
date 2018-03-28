@@ -84,7 +84,7 @@ class Stream(object):
         keyword = ['start', 'end']
         url = "http://{0}/{1}/hubs/{2}/streams/{3}/historyactivity?".format(API_HOST, API_VERSION, self.hub, key)
         url = normalize_path(kwargs, keyword, url)
-        return api._get(url, self.__auth__)
+        return api._get(url=url, auth=self.__auth__)
 
     # save_as等同于saveas接口，出于兼容考虑，暂时保留
     def save_as(self, **kwargs):
@@ -112,7 +112,7 @@ class Stream(object):
         url = "http://%s/%s/hubs/%s/streams/%s/saveas" % (API_HOST, API_VERSION, self.hub, key)
         keyword = ['start', 'end', 'fname', 'format', 'pipeline', 'notify', 'expireDays']
         encoded_data = normalize_data(kwargs, keyword)
-        return api._post(url, self.__auth__, data=encoded_data)
+        return api._post(url=url, auth=self.__auth__, data=encoded_data)
 
     """
     snapshot 保存直播截图到存储空间
@@ -128,7 +128,7 @@ class Stream(object):
         encoded_data = normalize_data(kwargs, keyword)
         key = urlsafe_b64encode(self.key)
         url = "http://%s/%s/hubs/%s/streams/%s/snapshot" % (API_HOST, API_VERSION, self.hub, key)
-        return api._post(url, self.__auth__, data=encoded_data)
+        return api._post(url=url, auth=self.__auth__, data=encoded_data)
 
     """
     update_converts 更改流的转码规格
@@ -140,8 +140,7 @@ class Stream(object):
         key = urlsafe_b64encode(self.key)
         url = "http://%s/%s/hubs/%s/streams/%s/converts" % (API_HOST, API_VERSION, self.hub, key)
         encoded_data = json.dumps({"converts": profiles})
-        return api._post(url, self.__auth__, data=encoded_data)
-
+        return api._post(url=url, auth=self.__auth__, data=encoded_data)
 
     def to_json(self):
         return json.dumps(self.data)

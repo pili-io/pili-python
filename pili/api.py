@@ -67,3 +67,7 @@ def _post(url, auth, data):
     hearders = auth.authed("POST", url, body=data)
     return requests.post(url=url, headers=hearders, data=data)
 
+def _delete(url, auth):
+    print("delete")
+    hearders = auth.authed("DELETE", url)
+    return requests.delete(url=url, headers=hearders)
