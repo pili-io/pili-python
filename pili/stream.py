@@ -87,8 +87,8 @@ class Stream(object):
         return api._get(url, self.__auth__)
 
     # save_as等同于saveas接口，出于兼容考虑，暂时保留
-    def save_as(self, start_second=None, end_second=None, **kwargs):
-        return self.saveas(start_second, end_second, **kwargs)
+    def save_as(self, **kwargs):
+        return self.saveas(**kwargs)
 
     """
     saveas 保存直播回放到存储空间
@@ -108,11 +108,10 @@ class Stream(object):
         persistentID: 异步模式时，持久化异步处理任务ID，通常用不到该字段
     """
     def saveas(self, **kwargs):
-        url = "http://%s/%s/hubs/%s/streams/%s/saveas" % (API_HOST, API_VERSION, self.hub, self.key)
-
+        key = urlsafe_b64encode(self.key)
+        url = "http://%s/%s/hubs/%s/streams/%s/saveas" % (API_HOST, API_VERSION, self.hub, key)
         keyword = ['start', 'end', 'fname', 'format', 'pipeline', 'notify', 'expireDays']
         encoded_data = normalize_data(kwargs, keyword)
-        key = urlsafe_b64encode(self.key)
         return api._post(url, self.__auth__, data=encoded_data)
 
     """

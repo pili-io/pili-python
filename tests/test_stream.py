@@ -55,11 +55,16 @@ class TestStreamCases(unittest.TestCase):
     # 这个测试需要维持推流test1
     def test_stream_saveas(self):
         stream = self.hub.get("test1")
-        stream.save_as()
+        ret = stream.save_as()
+        self.assertEqual(200, ret.status_code)
         now = int(time.time())
-        stream.save_as(now - 20)
-        stream.save_as(now - 20, now)
-        ret = stream.save_as(now - 20, now, fname="test1.mp4", format="mp4")
+        ret = stream.saveas(start=now - 20)
+        self.assertIn(ret.status_code, (200, 619))
+        ret = stream.save_as(start=now - 20, end=now)
+        self.assertIn(ret.status_code, (200, 619))
+        ret = stream.saveas(start=now - 20, end=now, fname="test1.m3u8", format="m3u8")
+        self.assertEqual("test1.m3u8", json.loads(ret.text).get("fname"))
+        ret = stream.save_as(start=now - 20, end=now, fname="test1.mp4", format="mp4")
         self.assertEqual(ret["fname"], "test1.mp4")
         self.assertTrue(ret["persistentID"])
         try:
@@ -77,3 +82,4 @@ class TestStreamCases(unittest.TestCase):
     def test_stream_history(self):
         stream = self.hub.get("test1")
         self.assertEqual(200, stream.history().status_code)
+
