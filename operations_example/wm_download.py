@@ -14,7 +14,7 @@ mac = Mac(access_key, secret_key)
 
 hub = Hub(mac, hub_name)
 
-resp = hub.wm_query(name="test1")
+resp = hub.wm_download(name="test1")
 
 print(resp.status_code)
 print(resp.headers)

@@ -75,13 +75,21 @@ class Hub(object):
         return api._get(url, self.__auth__)
 
     def wm_crete(self, **kwargs):
-        keyword = ['name', 'comment', "left", "top", "width", "imageURL"]
+        keyword = ['name', 'comment', "left", "top", "width", "imageURL", "imageData"]
         encoded = normalize_data(kwargs, keyword)
         url = "http://{0}/{1}/hubs/{2}/watermarktemplate".format(API_HOST, API_VERSION, self.__hub__)
         return api._post(url=url, auth=self.__auth__, data=encoded)
 
-    def wm_query(self, **kwargs):
+    def wm_list(self, **kwargs):
         keyword = ['limit']
         url = "http://{0}/{1}/hubs/{2}/watermarktemplate".format(API_HOST, API_VERSION, self.__hub__)
         url = normalize_path(kwargs, keyword, url)
+        return api._get(url=url, auth=self.__auth__)
+
+    def wm_download(self, name):
+        url = "http://{0}/{1}/hubs/{2}/watermarktemplate/{3}/image".format(API_HOST, API_VERSION, self.__hub__, name)
+        return api._get(url=url, auth=self.__auth__)
+
+    def wm_query(self, name):
+        url = "http://{0}/{1}/hubs/{2}/watermarktemplate/{3}".format(API_HOST, API_VERSION, self.__hub__, name)
         return api._get(url=url, auth=self.__auth__)
