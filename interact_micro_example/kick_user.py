@@ -12,4 +12,4 @@ mac = Mac(access_key, secret_key)
 
 room = RoomClient(mac)
 
-print room.kickUser('roomname', 'admin_user')
+print(room.kickUser('roomname', 'admin_user'))

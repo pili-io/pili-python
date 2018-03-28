@@ -23,22 +23,20 @@ class RoomClient(object):
         return api._post(url=url, auth=self.__auth__, data=encoded)
 
     def getRoom(self, roomName, version='v2'):
-        res = api.get_room(self.__auth__, roomName=roomName, version=version)
-        return res
+        url = "http://%s/%s/rooms/%s" % (RTC_API_HOST, version, roomName)
+        return api._get(url=url, auth=self.__auth__)
 
     def deleteRoom(self, roomName, version='v2'):
         url = "http://%s/%s/rooms/%s" % (RTC_API_HOST, version, roomName)
         return api._delete(url=url, auth=self.__auth__)
 
-
-
     def getUser(self, roomName, version='v2'):
-        res = api.get_user(self.__auth__, roomName=roomName, version=version)
-        return res
+        url = "http://%s/%s/rooms/%s/users" % (RTC_API_HOST, version, roomName)
+        return api._get(url=url, auth=self.__auth__)
 
     def kickUser(self, roomName, userId, version='v2'):
-        res = api.kick_user(self.__auth__, roomName=roomName, userId=userId, version=version)
-        return res
+        url = "http://%s/%s/rooms/%s/users/%s" % (RTC_API_HOST, version, roomName, userId)
+        return api._delete(url=url, auth=self.__auth__)
 
     def roomToken(self, roomName, userId, perm, expireAt, version='v2'):
         if version == 'v2':
