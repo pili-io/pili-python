@@ -6,6 +6,7 @@ from conf import API_HOST, API_VERSION
 from utils import normalize_path, normalize_data
 import json
 
+
 class Hub(object):
     def __init__(self, mac, hub):
         self.__auth__ = mac.__auth__
@@ -14,10 +15,9 @@ class Hub(object):
     # create 创建一路流
     def create(self, **kwargs):
         keyword = ['key']
-        url = "http://%s/%s/hubs/%s/streams" % (API_HOST, API_VERSION, self.__hub__)
+        url = "http://{0}/{1}/hubs/{2}/streams".format(API_HOST, API_VERSION, self.__hub__)
         encoded = normalize_data(kwargs, keyword)
         return api._post(url=url, auth=self.__auth__, data=encoded)
-
 
     # 获取一路流
     def get(self, key):
@@ -35,11 +35,10 @@ class Hub(object):
         marker: 这次遍历得到的游标，下次请求应该带上，如果为""，则表示已遍历完所有流
     """
     def list(self, **kwargs):
-        url = "http://%s/%s/hubs/%s/streams?" % (API_HOST, API_VERSION, self.__hub__)
+        url = "http://{0}/{1}/hubs/{2}/streams?".format(API_HOST, API_VERSION, self.__hub__)
         keyword = ['liveonly', 'prefix', 'limit', 'marker']
         url = normalize_path(kwargs, keyword, url)
         return api._get(url=url, auth=self.__auth__)
-
 
     """
     batch_live_status 批量查询流的直播信息
@@ -55,23 +54,34 @@ class Hub(object):
             video: 正整数，视频帧率
             data: 正整数，数据帧率
     """
+
     def batch_live_status(self, streams):
         encoded = json.dumps({"items": streams})
-        url = "http://%s/%s/hubs/%s/livestreams?" % (API_HOST, API_VERSION, self.__hub__)
+        url = "http://{0}/{1}/hubs/{2}/livestreams".format(API_HOST, API_VERSION, self.__hub__)
         return api._post(url=url, auth=self.__auth__, data=encoded)
 
-
     def bandwidth_count_now(self):
-        url = "http://%s/%s/hubs/%s/stat/play" % (API_HOST, API_VERSION, self.__hub__)
+        url = "http://{0}/{1}/hubs/{2}/stat/play".format(API_HOST, API_VERSION, self.__hub__)
         return api._get(url, self.__auth__)
 
     def bandwidth_count_history(self, **kwargs):
-        url = "http://%s/%s/hubs/%s/stat/play/history?" % (API_HOST, API_VERSION, self.__hub__)
+        url = "http://{0}/{1}/hubs/{2}/stat/play/history".format(API_HOST, API_VERSION, self.__hub__)
         keyword = ['start', 'end', 'limit', 'marker']
         url = normalize_path(kwargs, keyword, url)
         return api._get(url=url, auth=self.__auth__)
 
     def bandwidth_count_detail(self, time):
-        url = "http://%s/%s/hubs/%s/stat/play/history/detail?time=%s" % (API_HOST, API_VERSION, self.__hub__, time)
+        url = "http://{0}/{1}/hubs/{2}/stat/play/history/detail?time=%s".format(API_HOST, API_VERSION, self.__hub__, time)
         return api._get(url, self.__auth__)
 
+    def wm_crete(self, **kwargs):
+        keyword = ['name', 'comment', "left", "top", "width", "imageURL"]
+        encoded = normalize_data(kwargs, keyword)
+        url = "http://{0}/{1}/hubs/{2}/watermarktemplate".format(API_HOST, API_VERSION, self.__hub__)
+        return api._post(url=url, auth=self.__auth__, data=encoded)
+
+    def wm_query(self, **kwargs):
+        keyword = ['limit']
+        url = "http://{0}/{1}/hubs/{2}/watermarktemplate".format(API_HOST, API_VERSION, self.__hub__)
+        url = normalize_path(kwargs, keyword, url)
+        return api._get(url=url, auth=self.__auth__)
