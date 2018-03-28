@@ -12,5 +12,4 @@ mac = Mac(access_key, secret_key)
 
 room = RoomClient(mac)
 
-print(room.create_room('admin_user', 'roomname'))
-
+print(room.roomToken('roomname', 'admin_user', 'admin', 3600))

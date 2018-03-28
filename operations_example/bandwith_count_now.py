@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from pili import RoomClient, Mac
+from pili import Mac, Hub
 
 # 替换成自己 Qiniu 账号的 AccessKey
 access_key = "..."
@@ -8,9 +8,14 @@ access_key = "..."
 # 替换成自己 Qiniu 账号的 SecretKey
 secret_key = "..."
 
+hub_name = '...'
+
 mac = Mac(access_key, secret_key)
 
-room = RoomClient(mac)
+hub = Hub(mac, hub_name)
 
-print(room.create_room('admin_user', 'roomname'))
+resp = hub.bandwidth_count_now()
 
+print(resp.status_code)
+print(resp.headers)
+print(resp.text)
