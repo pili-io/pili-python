@@ -23,7 +23,7 @@
     - [x] 更改流的实时转码规格: stream.update_converts(profiles)
     - [x] 查询直播历史: stream.history(start, end)
 
-- Stream
+- Room
     - [x] 创建房间: room.create_room(options)
     - [x] 生成token: room.roomToken(options)
     - [x] 删除房间: room.deleteRoom(roomName)
@@ -53,12 +53,19 @@
     - [Stream](#stream)
         - [Get Stream info](#get-stream-info)
         - [Disable a Stream](#disable-a-stream)
-        - [Enable a Stream](#enable-a-stream)
         - [Get Stream live status](#get-stream-live-status)
         - [Save Stream live playback](#save-stream-live-playback)
         - [Save Stream snapshot](#save-stream-snapshot)
         - [Update Stream converts](#update-stream-converts)
         - [Get Stream history activity](#get-stream-history-activity)
+    - [Room](#stream)
+        - [Create Room](#create-room)
+        - [Create Token](#create-token)
+        - [Delete Room](#delete-room)
+        - [Kick User](#kick-user)
+        - [Query Room](#query-room)
+        - [Query User](#query-user)
+
 
 ## Installation
 
@@ -82,7 +89,6 @@ secret_key = "<QINIU SECRET KEY>" # 替换成自己 Qiniu 账号的 SecretKey
 hub_name = "<PILI HUB NAME>" # Hub 必须事先存在
 
 mac = pili.Mac(AccessKey, SecretKey)
-client = pili.Client(mac)
 # ...
 ```
 
@@ -134,8 +140,7 @@ print pili.snapshot_play_url("live-snapshot.test.com", hub_name, "streamtitle")
 
 ```python
 mac = pili.Mac(AccessKey, SecretKey)
-client = pili.Client(mac)
-hub = client.hub("PiliSDKTest")
+hub = Hub(mac, hub_name)
 ```
 
 #### Create a new Stream
@@ -205,19 +210,6 @@ print "after sleep 5 seconds:", stream.refresh(), stream.disabled()
 # after sleep 5 seconds: {"disabledTill": 1488378022, "converts": [], "hub": "PiliSDKTest", "key": "stream23126041129_1"} False
 ```
 
-#### Enable a Stream
-
-```python
-stream.disable()
-stream = hub.get(stream_title1)
-stream.disable()
-print "before enable:", stream.refresh(), stream.disabled()
-stream.enable()
-print "after enable:", stream.refresh(), stream.disabled()
-# before enable: {"disabledTill": -1, "converts": [], "hub": "PiliSDKTest", "key": "stream23126041129_1"} True
-# after enable: {"disabledTill": 0, "converts": [], "hub": "PiliSDKTest", "key": "stream23126041129_1"} False
-```
-
 #### Get Stream live status
 
 ```python
@@ -259,7 +251,84 @@ print "after update converts:", stream.refresh()
 
 ```python
 now = int(time.time())
-print "get publish history:"
+print "get publish history
 print stream.history(start_second=now-86400)
 # [{u'start': 1488359927, u'end': 1488367483}, {u'start': 1488348110, u'end': 1488358759}, {u'start': 1488338678, u'end': 1488340383}, {u'start': 1488333270, u'end': 1488337953}, {u'start': 1488282646, u'end': 1488288321}]
 ```
+
+
+### Room
+
+#### Instantiate a Pili Room
+
+```python
+mac = pili.Mac(AccessKey, SecretKey)
+room = RoomClient(mac)
+```
+
+#### Create Room
+
+```python
+resp = room.create_room('admin_user', 'roomname')
+print(resp.status_code)
+print(resp.headers)
+print(resp.text)
+#200
+#{'Content-Length': '24', 'X-Whom': 'bc196', 'Vary': 'Accept-Encoding', 'Server': 'nginx/1.8.0', 'X-Log': 'PILI-RTC:1', 'Connection': 'keep-alive', 'X-Reqid': 'bccmalhRqam8WsO_', 'Date': 'Thu, 29 Mar 2018 08:54:01 GMT', 'Content-Type': 'application/json'}
+#{"room_name":"roomname"}
+```
+
+#### Create Token
+
+````python
+print(room.roomToken('roomname', 'admin_user', 'admin', 3600))
+````
+
+#### Delete Room
+
+````python
+resp = room.deleteRoom('roomname')
+print(resp.status_code)
+print(resp.headers)
+print(resp.text)
+#200
+#{'Content-Length': '2', 'X-Whom': 'bc197', 'Vary': 'Accept-Encoding', 'Server': 'nginx/1.8.0', 'X-Log': 'PILI-RTC:1', 'Connection': 'keep-alive', 'X-Reqid': 'GRkeCnQZB6q8WkvM', 'Date': 'Thu, 29 Mar 2018 08:55:35 GMT', 'Content-Type': 'application/json'}
+#{}
+````
+
+#### Kick User
+
+````python
+resp = room.kickUser('roomname', 'admin_user')
+print(resp.status_code)
+print(resp.headers)
+print(resp.text)
+#200
+#{'Content-Length': '33', 'Server': 'nginx/1.8.0', 'X-Log': 'PILI-RTC:169/500', 'Connection': 'keep-alive', 'X-Reqid': 'DT87e9Y39qq8WrN7, DT87e9Y39qq8WrN7', 'Date': 'Thu, 29 Mar 2018 08:59:34 GMT', 'Content-Type': 'application/json'}
+#{}
+````
+
+#### Query Room
+
+````python
+resp = room.getRoom('roomname')
+print(resp.status_code)
+print(resp.headers)
+print(resp.text)
+#200
+#{'Content-Length': '73', 'X-Whom': 'bc197', 'Vary': 'Accept-Encoding', 'Server': 'nginx/1.8.0', 'X-Log': 'PILI-RTC:213', 'Connection': 'keep-alive', 'X-Reqid': 'GRkeCnQZRqu8Wp3R, GRkeCnQZRqu8Wp3R', 'Date': 'Thu, 29 Mar 2018 09:00:55 GMT', 'Content-Type': 'application/json'}
+#{"owner_id":"admin","room_name":"roomname","room_status":0,"user_max":10}
+````
+#### Query User
+
+````python
+resp = room.getUser('roomname')
+print(resp.status_code)
+print(resp.headers)
+print(resp.text)
+#200
+#{'Content-Length': '19', 'X-Whom': 'bc197', 'Vary': 'Accept-Encoding', 'Server': 'nginx/1.8.0', 'X-Log': 'PILI-RTC:197', 'Connection': 'keep-alive', 'X-Reqid': 'bccmalhRdqu8WnnH, bccmalhRdqu8WnnH', 'Date': 'Thu, 29 Mar 2018 09:01:43 GMT', 'Content-Type': 'application/json'}
+#{"active_users":[]}
+````
+
+
