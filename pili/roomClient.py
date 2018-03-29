@@ -2,9 +2,9 @@ import hmac
 import hashlib
 import json
 import time
+
 import pili.api as api
 from utils import urlsafe_base64_encode
-
 from conf import RTC_API_HOST
 
 
@@ -48,8 +48,8 @@ class RoomClient(object):
                       "user_id": userId, "perm": perm,
                       "expire_at": int(time.time()) + expireAt}
 
-        roomAccessString = json.dumps(params, separators=(',', ':'))
-        encodedRoomAccess = urlsafe_base64_encode(roomAccessString)
-        hashed = hmac.new(self.__auth__.secret_key, encodedRoomAccess, hashlib.sha1)
-        encodedSign = urlsafe_base64_encode(hashed.digest())
-        return self.__auth__.access_key+":"+encodedSign+":"+encodedRoomAccess
+        room_access_string = json.dumps(params, separators=(',', ':'))
+        encoded_room_access = urlsafe_base64_encode(room_access_string)
+        hashed = hmac.new(self.__auth__.secret_key, encoded_room_access, hashlib.sha1)
+        encoded_sign = urlsafe_base64_encode(hashed.digest())
+        return self.__auth__.access_key+":"+encoded_sign+":"+encoded_room_access

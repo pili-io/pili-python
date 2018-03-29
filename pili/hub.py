@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 
+import json
+
 import pili.api as api
 from .stream import Stream
 from conf import API_HOST, API_VERSION
 from utils import normalize_path, normalize_data
-import json
 
 
 class Hub(object):

@@ -4,10 +4,11 @@ Utils
 from urllib2 import urlopen, HTTPError
 import contextlib
 import json
-from .errors import APIError
 import hmac
 import hashlib
 import base64
+
+from .errors import APIError
 
 
 def send_and_decode(req):
@@ -69,6 +70,7 @@ def normalize_path(args, keyword, url):
     if path:
         url = url + '?' + path
     return url
+
 
 def normalize_data(args, keyword):
     if set(args) - set(keyword):

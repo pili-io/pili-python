@@ -12,7 +12,7 @@ mac = Mac(access_key, secret_key)
 
 room = RoomClient(mac)
 
-resp = room.getUser('roomname11111')
+resp = room.getUser('roomname')
 
 print(resp.status_code)
 print(resp.headers)

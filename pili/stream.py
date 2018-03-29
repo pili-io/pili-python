@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 import json
-import time
 from base64 import urlsafe_b64encode
+
 import pili.api as api
 from conf import API_HOST, API_VERSION
 from utils import normalize_path, normalize_data

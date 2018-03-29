@@ -3,7 +3,7 @@ Auth provide class Auth for authentication account. You can use decorator
 auth_interface to create a function with auto generated authentication.
 """
 from urlparse import urlparse
-from .utils import send_and_decode, __hmac_sha1__
+from .utils import __hmac_sha1__
 
 import pili.conf as conf
 
@@ -50,36 +50,3 @@ class Auth(object):
         headers.update({'User-Agent': conf.API_USERAGENT})
         return headers
 
-
-def auth_interface(method):
-    """
-    decorator takes func(**args) return req and change it to
-    func(auth, **args) return json result.
-
-    Args:
-        func(**args) -> Request
-
-    Returns:
-        func(**args) -> dict (decoded json)
-    """
-    def authed(auth, **args):
-        """
-        send request and decode response. Return the result in python format.
-        """
-        req = method(**args)
-
-        parsed = urlparse(req.get_full_url())
-        raw_str = '%s %s' % (req.get_method(), parsed.path)
-        if parsed.query:
-            raw_str += '?%s' % (parsed.query)
-        raw_str += '\nHost: %s' % (parsed.netloc)
-        if req.has_data():
-            raw_str += '\nContent-Type: application/json'
-        raw_str += "\n\n"
-        if req.has_data():
-            raw_str += req.get_data()
-            req.add_header('Content-Type', 'application/json')
-        req.add_header('Authorization', auth.auth_interface_str(raw_str))
-        req.add_header('User-Agent', conf.API_USERAGENT)
-        return send_and_decode(req)
-    return authed
