@@ -12,9 +12,8 @@ mac = Mac(access_key, secret_key)
 
 room = RoomClient(mac)
 
-resp = room.create_room('admin_user', 'roomname')
+resp = room.create_room('admin_user', 'room_name')
 
 print(resp.status_code)
 print(resp.headers)
 print(resp.text)
-

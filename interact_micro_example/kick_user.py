@@ -12,7 +12,7 @@ mac = Mac(access_key, secret_key)
 
 room = RoomClient(mac)
 
-resp = room.kickUser('roomname', 'admin_user')
+resp = room.kickUser('room_name', 'admin_user')
 
 print(resp.status_code)
 print(resp.headers)

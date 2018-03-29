@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 
 import json
+
 from base64 import urlsafe_b64encode
 
 import pili.api as api
-from conf import API_HOST, API_VERSION
-from utils import normalize_path, normalize_data
+from .conf import API_HOST, API_VERSION
+from .utils import normalize_path, normalize_data
 
 
 class Stream(object):
@@ -29,8 +30,8 @@ class Stream(object):
             self.refresh()
         try:
             return self.__data__ if attr == "data" else self.__data__[attr]
-        except KeyError, e:
-            return e.message
+        except KeyError as e:
+            return e
 
     def __repr__(self):
         return self.to_json()

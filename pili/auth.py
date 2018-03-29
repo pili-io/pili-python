@@ -2,9 +2,9 @@
 Auth provide class Auth for authentication account. You can use decorator
 auth_interface to create a function with auto generated authentication.
 """
-from urlparse import urlparse
-from .utils import __hmac_sha1__
 
+from .utils import __hmac_sha1__
+from .compat import urlparse
 import pili.conf as conf
 
 

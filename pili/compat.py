@@ -33,6 +33,7 @@ is_py3 = (_ver[0] == 3)
 
 if is_py2:
     from urlparse import urlparse  # noqa
+    from urllib2 import urlopen, HTTPError
     import StringIO
     StringIO = BytesIO = StringIO.StringIO
 
@@ -53,6 +54,7 @@ if is_py2:
 
 elif is_py3:
     from urllib.parse import urlparse  # noqa
+    from urllib.request import urlopen, HTTPError
     import io
     StringIO = io.StringIO
     BytesIO = io.BytesIO

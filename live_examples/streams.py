@@ -16,7 +16,7 @@ hub = Hub(mac, hub_name)
 
 liveonly = False
 
-prefix = ""
+prefix = "..."
 
 limit = 100
 

@@ -8,9 +8,9 @@ access_key = "..."
 # 替换成自己 Qiniu 账号的 SecretKey
 secret_key = "..."
 
-hub_name = '...'
+hub_name = "..."
 
-domain = '...'
+domain = "..."
 
 stream_name = '123'
 
@@ -27,12 +27,12 @@ stream = hub.get(stream_name)
 https://developer.qiniu.com/pili/kb/1332/broadcast-authentication-mode
 https://developer.qiniu.com/pili/kb/2635/seven-cows-live-push-flow-authentication-md
 """
-print rtmp_publish_url(domain, hub_name, stream_name, mac, expire)
+print(rtmp_publish_url(domain, hub_name, stream_name, mac, expire))
 
-# print rtmp_play_url(domain, hub_name, stream_name)
+# print(rtmp_play_url(domain, hub_name, stream_name))
 #
-# print hls_play_url(domain, hub_name, stream_name)
+# print(hls_play_url(domain, hub_name, stream_name))
 #
-# print hdl_play_url(domain, hub_name, stream_name)
+# print(hdl_play_url(domain, hub_name, stream_name))
 #
-# print snapshot_play_url(domain, hub_name, stream_name)
+# print(snapshot_play_url(domain, hub_name, stream_name))

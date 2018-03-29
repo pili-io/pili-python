@@ -1,13 +1,14 @@
 """
 Utils
 """
-from urllib2 import urlopen, HTTPError
+
 import contextlib
 import json
 import hmac
 import hashlib
 import base64
 
+from .compat import urlopen, HTTPError
 from .errors import APIError
 
 
@@ -27,7 +28,7 @@ def send_and_decode(req):
                 return None
             raw = res.read()
             return json.loads(raw)
-    except HTTPError, res:
+    except HTTPError as res:
         raw = res.read()
         try:
             data = json.loads(raw)

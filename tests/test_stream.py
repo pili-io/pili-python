@@ -24,8 +24,6 @@ class TestStreamCases(unittest.TestCase):
         secret_key = env("secret_key")
         if access_key == "" or secret_key == "":
             raise unittest.SkipTest("need set access_key or secret_key")
-        if env("PILI_API_HOST") != "":
-            API_HOST = env("PILI_API_HOST")
         mac = Mac(access_key, secret_key)
         self.hub = Hub(mac, hub_name)
         self.stream_title = "streamTest" + str(int(random.random()*1e10))
@@ -67,10 +65,6 @@ class TestStreamCases(unittest.TestCase):
         ret = stream.save_as(start=now - 20, end=now, fname="test1.mp4", format="mp4")
         self.assertEqual(ret["fname"], "test1.mp4")
         self.assertTrue(ret["persistentID"])
-        try:
-            stream.save_as(now - 20, now, format="mp4", pipeline="notexist")
-        except Exception, e:
-            self.assertEqual(str(e), "no such pipeline")
 
     # 这个测试需要维持推流test1
     def test_stream_snashot(self):

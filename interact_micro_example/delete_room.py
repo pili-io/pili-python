@@ -12,7 +12,7 @@ mac = Mac(access_key, secret_key)
 
 room = RoomClient(mac)
 
-resp = room.deleteRoom('roomname')
+resp = room.deleteRoom('room_name')
 
 print(resp.status_code)
 print(resp.headers)

@@ -8,9 +8,9 @@ access_key = "..."
 # 替换成自己 Qiniu 账号的 SecretKey
 secret_key = "..."
 
-hub_name = '...'
+hub_name = "..."
 
-stream_name = '...'
+stream_name = "..."
 
 mac = Mac(access_key, secret_key)
 
