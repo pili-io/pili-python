@@ -7,7 +7,6 @@ import random
 import json
 
 from pili import Hub, Mac
-from pili.conf import API_HOST
 
 
 def env(key):
@@ -26,8 +25,6 @@ class TestHubCases(unittest.TestCase):
 
         if access_key == "" or secret_key == "":
             raise unittest.SkipTest("need set access_key or secret_key")
-        if env("PILI_API_HOST") != "":
-            API_HOST = env("PILI_API_HOST")
         mac = Mac(access_key, secret_key)
         self.hub = Hub(mac, hub_name)
 

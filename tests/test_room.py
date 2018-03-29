@@ -7,7 +7,6 @@ import json
 from pili import RoomClient, Mac
 
 
-
 def env(key):
     if key in os.environ:
         return os.environ[key]
