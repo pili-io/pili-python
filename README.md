@@ -17,13 +17,19 @@
 - Stream
     - [x] 流信息: stream.refresh()
     - [x] 禁用流: stream.disable(till)
-    - [x] 启用流: stream.enable()
     - [x] 查询直播状态: stream.status()
     - [x] 保存直播回放: stream.saveas(start, end, options)
     - [x] 保存直播截图: stream.snapshot(options)
     - [x] 更改流的实时转码规格: stream.update_converts(profiles)
     - [x] 查询直播历史: stream.history(start, end)
 
+- Room
+    - [x] 创建房间: room.create_room(options)
+    - [x] 生成token: room.roomToken(options）
+    - [x] 删除房间: room.deleteRoom(roomName)
+    - [x] 踢除用户: room.kickUser(roomName, userId)
+    - [x] 查询房间: room.getRoom(roomName)
+    - [x] 查询在线用户: room.getUser(roomName)
 
 ## Contents
 
