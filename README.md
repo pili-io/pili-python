@@ -23,13 +23,14 @@
     - [x] 更改流的实时转码规格: stream.update_converts(profiles)
     - [x] 查询直播历史: stream.history(start, end)
 
-- Room
-    - [x] 创建房间: room.create_room(options)
-    - [x] 生成token: room.roomToken(options）
-    - [x] 删除房间: room.deleteRoom(roomName)
-    - [x] 踢除用户: room.kickUser(roomName, userId)
-    - [x] 查询房间: room.getRoom(roomName)
-    - [x] 查询在线用户: room.getUser(roomName)
+- Stream
+    - [x] 创建房间: room.create_room(options)
+    - [x] 生成token: room.roomToken(options)
+    - [x] 删除房间: room.deleteRoom(roomName)
+    - [x] 踢除用户: room.kickUser(roomName, userId)
+    - [x] 查询房间: room.getRoom(roomName)
+    - [x] 查询在线用户: room.getUser(roomName)
+
 
 ## Contents
 
