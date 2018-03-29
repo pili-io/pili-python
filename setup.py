@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='pili2',
-    version='2.1.0',
+    version='2.2.0',
     keywords=('pili', 'streaming', 'hls', 'rtmp'),
     description='Pili Streaming Cloud Server-Side Library For Python',
     license='MIT License',
