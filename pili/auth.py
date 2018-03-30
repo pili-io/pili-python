@@ -4,7 +4,7 @@ auth_interface to create a function with auto generated authentication.
 """
 
 from .utils import __hmac_sha1__
-from .compat import urlparse
+from .compat import urlparse, b
 import pili.conf as conf
 
 
@@ -22,7 +22,7 @@ class Auth(object):
     def __init__(self, access_key, secret_key):
         if not (access_key and secret_key):
             raise ValueError('invalid key')
-        self.access_key, self.secret_key = access_key, secret_key
+        self.access_key, self.secret_key = access_key, b(secret_key)
 
     def auth_interface_str(self, raw_str):
         """

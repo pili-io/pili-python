@@ -4,8 +4,8 @@ import json
 import time
 
 import pili.api as api
-from utils import urlsafe_base64_encode
-from conf import RTC_API_HOST
+from .utils import urlsafe_base64_encode
+from .conf import RTC_API_HOST
 
 
 class RoomClient(object):

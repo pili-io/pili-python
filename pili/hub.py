@@ -72,7 +72,7 @@ class Hub(object):
         return api._get(url=url, auth=self.__auth__)
 
     def bandwidth_count_detail(self, time):
-        url = "http://{0}/{1}/hubs/{2}/stat/play/history/detail?time=%s".format(API_HOST, API_VERSION, self.__hub__, time)
+        url = "http://{0}/{1}/hubs/{2}/stat/play/history/detail?time={3}".format(API_HOST, API_VERSION, self.__hub__, time)
         return api._get(url, self.__auth__)
 
     def wm_crete(self, **kwargs):

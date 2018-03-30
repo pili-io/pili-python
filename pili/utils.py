@@ -7,8 +7,9 @@ import json
 import hmac
 import hashlib
 import base64
+from copy import deepcopy
 
-from .compat import urlopen, HTTPError
+from .compat import urlopen, HTTPError, b, s
 from .errors import APIError
 
 
@@ -42,16 +43,9 @@ def __hmac_sha1__(data, key):
     """
     hmac-sha1
     """
+    data = b(data)
     hashed = hmac.new(key, data, hashlib.sha1)
-    return base64.urlsafe_b64encode(hashed.digest())
-
-
-def b(data):
-    return bytes(data)
-
-
-def s(data):
-    return bytes(data)
+    return urlsafe_base64_encode(hashed.digest())
 
 
 def urlsafe_base64_encode(data):
@@ -62,21 +56,20 @@ def urlsafe_base64_encode(data):
 def normalize_path(args, keyword, url):
     if set(args) - set(keyword):
         raise ValueError('invalid key')
-    for k, v in args.items():
-        if v is None:
-            del args[k]
     path = ''
     for k, v in args.items():
-        path += "&%s=%s" % (k, v)
+        if v:
+            path += "&%s=%s" % (k, v)
     if path:
-        url = url + '?' + path
+        url = url + '?' + path[1:]
     return url
 
 
 def normalize_data(args, keyword):
     if set(args) - set(keyword):
         raise ValueError('invalid key')
+    copy_args = deepcopy(args)
     for k, v in args.items():
-        if v is None:
-            del args[k]
-    return json.dumps(args)
+        if not v:
+            del copy_args[k]
+    return json.dumps(copy_args)
