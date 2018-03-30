@@ -18,7 +18,7 @@ stream = hub.get("123")
 
 resp = stream.update_converts(["480p", "720p"])
 
-# 建议打印headers方便向官方反馈问题，该接口调用成功是放回json为空{}
+# 建议打印headers，方便向官方反馈问题，该接口调用成功会返回json为空{}
 print(resp.status_code)
 print(resp.headers)
 print(resp.text)

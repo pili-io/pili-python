@@ -57,6 +57,7 @@ def urlsafe_base64_decode(data):
     ret = urlsafe_b64decode(s(data))
     return ret
 
+
 def normalize_path(args, keyword, url):
     if set(args) - set(keyword):
         raise ValueError('invalid key')
