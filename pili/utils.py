@@ -6,7 +6,7 @@ import contextlib
 import json
 import hmac
 import hashlib
-import base64
+from base64 import urlsafe_b64encode, urlsafe_b64decode
 from copy import deepcopy
 
 from .compat import urlopen, HTTPError, b, s
@@ -49,9 +49,13 @@ def __hmac_sha1__(data, key):
 
 
 def urlsafe_base64_encode(data):
-    ret = base64.urlsafe_b64encode(b(data))
+    ret = urlsafe_b64encode(b(data))
     return s(ret)
 
+
+def urlsafe_base64_decode(data):
+    ret = urlsafe_b64decode(s(data))
+    return ret
 
 def normalize_path(args, keyword, url):
     if set(args) - set(keyword):

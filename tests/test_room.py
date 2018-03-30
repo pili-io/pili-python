@@ -5,6 +5,7 @@ import unittest
 import json
 
 from pili import RoomClient, Mac
+from pili.utils import urlsafe_base64_decode
 
 
 def env(key):
@@ -17,8 +18,8 @@ def env(key):
 class TestRoomCases(unittest.TestCase):
 
     def setUp(self):
-        access_key = env("access_key")
-        secret_key = env("secret_key")
+        access_key = "qUwQp6da8uMTpWjN-VLQ5o_B_dA-sZimFb7Zhq2u"
+        secret_key = "gKaLLT2xNXKfP-XiS5bZYS9-aOWJf5I6ymrPNdRK"
 
         if access_key == "" or secret_key == "":
             raise unittest.SkipTest("need set access_key or secret_key")
@@ -31,8 +32,7 @@ class TestRoomCases(unittest.TestCase):
 
     def test_create_token(self):
         test_token = self.room.roomToken('roomname', 'admin_user', 'admin', 3600)
-        import base64
-        decode_token = json.loads(base64.decodestring(test_token.split(":")[2]))
+        decode_token = json.loads(urlsafe_base64_decode(test_token.split(":")[2]))
         self.assertIn("admin_user", decode_token.get("user_id"))
         self.assertIn("2.0", decode_token.get("version"))
         self.assertIn("roomname", decode_token.get("room_name"))
