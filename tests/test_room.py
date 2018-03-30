@@ -18,8 +18,8 @@ def env(key):
 class TestRoomCases(unittest.TestCase):
 
     def setUp(self):
-        access_key = "qUwQp6da8uMTpWjN-VLQ5o_B_dA-sZimFb7Zhq2u"
-        secret_key = "gKaLLT2xNXKfP-XiS5bZYS9-aOWJf5I6ymrPNdRK"
+        access_key = env("access_key")
+        secret_key = env("secret_key")
 
         if access_key == "" or secret_key == "":
             raise unittest.SkipTest("need set access_key or secret_key")
