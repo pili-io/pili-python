@@ -2,6 +2,7 @@
 
 """
 https://developer.qiniu.com/pili/api/2520/save-the-live-capture
+保存直播截图
 """
 
 from pili import Mac, Hub

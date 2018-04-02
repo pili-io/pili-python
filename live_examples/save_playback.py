@@ -1,5 +1,11 @@
 # -*- coding: utf-8 -*-
 
+"""
+https://developer.qiniu.com/pili/api/2777/save-the-live-playback
+录制直播回放
+"""
+
+
 from pili import Mac, Hub
 
 # 替换成自己 Qiniu 账号的 AccessKey

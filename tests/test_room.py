@@ -50,5 +50,3 @@ class TestRoomCases(unittest.TestCase):
         resp = self.room.getUser(roomName="roomname")
         decode_data = json.loads(resp.text)
         self.assertIn("active_users", decode_data)
-
-
