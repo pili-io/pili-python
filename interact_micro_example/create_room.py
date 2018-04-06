@@ -8,11 +8,12 @@ access_key = "..."
 # 替换成自己 Qiniu 账号的 SecretKey
 secret_key = "..."
 
-
 mac = Mac(access_key, secret_key)
 
 room = RoomClient(mac)
 
-print room.createRoom('admin_user', 'roomname')
+resp = room.create_room('admin_user', 'room_name')
 
-# print room.roomToken('roomname', 'admin_user', 'admin', 36000)
+print(resp.status_code)
+print(resp.headers)
+print(resp.text)

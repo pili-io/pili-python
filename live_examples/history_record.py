@@ -1,22 +1,31 @@
 # -*- coding: utf-8 -*-
 
-import pili
+"""
+https://developer.qiniu.com/pili/api/2778/live-history
+单个直播流历史查询
+"""
+
+
+from pili import Mac, Hub
 
 # 替换成自己 Qiniu 账号的 AccessKey
 access_key = "..."
 
-
 # 替换成自己 Qiniu 账号的 SecretKey
 secret_key = "..."
 
+hub_name = "..."
 
-hub_name = '...'
+stream_name = "123"
 
-stream_name = '...'
+mac = Mac(access_key, secret_key)
 
-mac = pili.Mac(access_key, secret_key)
-client = pili.Client(mac)
-hub = client.hub(hub_name)
+hub = Hub(mac, hub_name)
+
 stream = hub.get(stream_name)
 
-print(stream.history(start_second=0, end_second=0))
+resp = stream.history(start=1513616430, end=1513616400)
+
+print(resp.status_code)
+print(resp.headers)
+print(resp.text)

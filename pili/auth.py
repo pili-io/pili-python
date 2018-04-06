@@ -2,9 +2,9 @@
 Auth provide class Auth for authentication account. You can use decorator
 auth_interface to create a function with auto generated authentication.
 """
-from urlparse import urlparse
-from .utils import send_and_decode, __hmac_sha1__
 
+from .utils import __hmac_sha1__
+from .compat import urlparse, b
 import pili.conf as conf
 
 
@@ -22,7 +22,7 @@ class Auth(object):
     def __init__(self, access_key, secret_key):
         if not (access_key and secret_key):
             raise ValueError('invalid key')
-        self.access_key, self.secret_key = access_key, secret_key
+        self.access_key, self.secret_key = access_key, b(secret_key)
 
     def auth_interface_str(self, raw_str):
         """
@@ -31,35 +31,21 @@ class Auth(object):
         encoded = __hmac_sha1__(raw_str, self.secret_key)
         return 'Qiniu {0}:{1}'.format(self.access_key, encoded)
 
+    def authed(self, method, url, body=None):
+        headers = {}
 
-def auth_interface(method):
-    """
-    decorator takes func(**args) return req and change it to
-    func(auth, **args) return json result.
-
-    Args:
-        func(**args) -> Request
-
-    Returns:
-        func(**args) -> dict (decoded json)
-    """
-    def authed(auth, **args):
-        """
-        send request and decode response. Return the result in python format.
-        """
-        req = method(**args)
-        parsed = urlparse(req.get_full_url())
-        raw_str = '%s %s' % (req.get_method(), parsed.path)
+        parsed = urlparse(url)
+        raw_str = '%s %s' % (method, parsed.path)
         if parsed.query:
-            raw_str += '?%s' % (parsed.query)
-        raw_str += '\nHost: %s' % (parsed.netloc)
-        if req.has_data():
+            raw_str += '?%s' % parsed.query
+        raw_str += '\nHost: %s' % parsed.netloc
+        if body:
             raw_str += '\nContent-Type: application/json'
-        raw_str += "\n\n"
-        if req.has_data():
-            raw_str += req.get_data()
-            req.add_header('Content-Type', 'application/json')
-        req.add_header('Authorization', auth.auth_interface_str(raw_str))
-        req.add_header('User-Agent', conf.API_USERAGENT)
-        return send_and_decode(req)
-    return authed
+            raw_str += "\n\n"
+            raw_str += body
+            headers.update({'Content-Type': 'application/json'})
+        else:
+            raw_str += "\n\n"
+        headers.update({'Authorization': self.auth_interface_str(raw_str)})
+        headers.update({'User-Agent': conf.API_USERAGENT})
+        return headers

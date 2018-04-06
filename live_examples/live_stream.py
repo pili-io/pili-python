@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 """
-https://developer.qiniu.com/pili/api/2777/save-the-live-playback
-录制直播回放
+https://developer.qiniu.com/pili/api/2776/live-broadcast-of-real-time-information
+单条流实时状态查询
 """
 
 
@@ -18,15 +18,13 @@ hub_name = "..."
 
 stream_name = "123"
 
-fname = 'example_fname.m3u8'
-
 mac = Mac(access_key, secret_key)
 
 hub = Hub(mac, hub_name)
 
 stream = hub.get(stream_name)
 
-resp = stream.saveas(start=0, end=0, format='m3u8', fname=fname)
+resp = stream.status()
 
 print(resp.status_code)
 print(resp.headers)

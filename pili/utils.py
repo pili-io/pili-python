@@ -1,13 +1,16 @@
 """
 Utils
 """
-from urllib2 import urlopen, HTTPError
+
 import contextlib
 import json
-from .errors import APIError
 import hmac
 import hashlib
-import base64
+from base64 import urlsafe_b64encode, urlsafe_b64decode
+from copy import deepcopy
+
+from .compat import urlopen, HTTPError, b, s
+from .errors import APIError
 
 
 def send_and_decode(req):
@@ -26,7 +29,7 @@ def send_and_decode(req):
                 return None
             raw = res.read()
             return json.loads(raw)
-    except HTTPError, res:
+    except HTTPError as res:
         raw = res.read()
         try:
             data = json.loads(raw)
@@ -40,18 +43,38 @@ def __hmac_sha1__(data, key):
     """
     hmac-sha1
     """
+    data = b(data)
     hashed = hmac.new(key, data, hashlib.sha1)
-    return base64.urlsafe_b64encode(hashed.digest())
-
-
-def b(data):
-    return bytes(data)
-
-
-def s(data):
-    return bytes(data)
+    return urlsafe_base64_encode(hashed.digest())
 
 
 def urlsafe_base64_encode(data):
-    ret = base64.urlsafe_b64encode(b(data))
+    ret = urlsafe_b64encode(b(data))
     return s(ret)
+
+
+def urlsafe_base64_decode(data):
+    ret = urlsafe_b64decode(s(data))
+    return ret
+
+
+def normalize_path(args, keyword, url):
+    if set(args) - set(keyword):
+        raise ValueError('invalid key')
+    path = ''
+    for k, v in args.items():
+        if v:
+            path += "&%s=%s" % (k, v)
+    if path:
+        url = url + '?' + path[1:]
+    return url
+
+
+def normalize_data(args, keyword):
+    if set(args) - set(keyword):
+        raise ValueError('invalid key')
+    copy_args = deepcopy(args)
+    for k, v in args.items():
+        if not v:
+            del copy_args[k]
+    return json.dumps(copy_args)

@@ -12,4 +12,8 @@ mac = Mac(access_key, secret_key)
 
 room = RoomClient(mac)
 
-print room.deleteRoom('roomname')
+resp = room.deleteRoom('room_name')
+
+print(resp.status_code)
+print(resp.headers)
+print(resp.text)

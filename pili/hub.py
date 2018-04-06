@@ -1,7 +1,11 @@
 # -*- coding: utf-8 -*-
 
+import json
+
 import pili.api as api
 from .stream import Stream
+from .conf import API_HOST, API_VERSION
+from .utils import normalize_path, normalize_data
 
 
 class Hub(object):
@@ -10,9 +14,11 @@ class Hub(object):
         self.__hub__ = hub
 
     # create 创建一路流
-    def create(self, key):
-        api.create_stream(self.__auth__, hub=self.__hub__, key=key)
-        return Stream(self.__auth__, hub=self.__hub__, key=key)
+    def create(self, **kwargs):
+        keyword = ['key']
+        url = "http://{0}/{1}/hubs/{2}/streams".format(API_HOST, API_VERSION, self.__hub__)
+        encoded = normalize_data(kwargs, keyword)
+        return api._post(url=url, auth=self.__auth__, data=encoded)
 
     # 获取一路流
     def get(self, key):
@@ -30,8 +36,10 @@ class Hub(object):
         marker: 这次遍历得到的游标，下次请求应该带上，如果为""，则表示已遍历完所有流
     """
     def list(self, **kwargs):
-        res = api.get_stream_list(self.__auth__, hub=self.__hub__, **kwargs)
-        return res
+        url = "http://{0}/{1}/hubs/{2}/streams?".format(API_HOST, API_VERSION, self.__hub__)
+        keyword = ['liveonly', 'prefix', 'limit', 'marker']
+        url = normalize_path(kwargs, keyword, url)
+        return api._get(url=url, auth=self.__auth__)
 
     """
     batch_live_status 批量查询流的直播信息
@@ -47,19 +55,49 @@ class Hub(object):
             video: 正整数，视频帧率
             data: 正整数，数据帧率
     """
+
     def batch_live_status(self, streams):
-        res = api.batch_live_status(self.__auth__, hub=self.__hub__, streams=streams)
-        return res["items"]
+        encoded = json.dumps({"items": streams})
+        url = "http://{0}/{1}/hubs/{2}/livestreams".format(API_HOST, API_VERSION, self.__hub__)
+        return api._post(url=url, auth=self.__auth__, data=encoded)
 
     def bandwidth_count_now(self):
-        res = api.bandwidth_count_now(self.__auth__, hub=self.__hub__)
-        return res
+        url = "http://{0}/{1}/hubs/{2}/stat/play".format(API_HOST, API_VERSION, self.__hub__)
+        return api._get(url, self.__auth__)
 
-    def bandwidth_count_history(self, start, end, limit=None, marker=None):
-        res = api.bandwidth_count_history(self.__auth__, hub=self.__hub__, start=start, end=end, limit=limit,
-                                          marker=marker)
-        return res
+    def bandwidth_count_history(self, **kwargs):
+        url = "http://{0}/{1}/hubs/{2}/stat/play/history".format(API_HOST, API_VERSION, self.__hub__)
+        keyword = ['start', 'end', 'limit', 'marker']
+        url = normalize_path(kwargs, keyword, url)
+        return api._get(url=url, auth=self.__auth__)
 
     def bandwidth_count_detail(self, time):
-        res = api.bandwidth_count_detail(self.__auth__, hub=self.__hub__, time=time)
-        return res
+        url = "http://{0}/{1}/hubs/{2}/stat/play/history/detail?time={3}".format(API_HOST, API_VERSION,
+                                                                                 self.__hub__, time)
+        return api._get(url, self.__auth__)
+
+    def wm_crete(self, **kwargs):
+        keyword = ['name', 'comment', "left", "top", "width", "imageURL", "imageData"]
+        encoded = normalize_data(kwargs, keyword)
+        url = "http://{0}/{1}/hubs/{2}/watermarktemplate".format(API_HOST, API_VERSION, self.__hub__)
+        return api._post(url=url, auth=self.__auth__, data=encoded)
+
+    def wm_list(self, **kwargs):
+        keyword = ['limit']
+        url = "http://{0}/{1}/hubs/{2}/watermarktemplate".format(API_HOST, API_VERSION, self.__hub__)
+        url = normalize_path(kwargs, keyword, url)
+        return api._get(url=url, auth=self.__auth__)
+
+    def wm_download(self, name):
+        url = "http://{0}/{1}/hubs/{2}/watermarktemplate/{3}/image".format(API_HOST, API_VERSION, self.__hub__, name)
+        return api._get(url=url, auth=self.__auth__)
+
+    def wm_query(self, name):
+        url = "http://{0}/{1}/hubs/{2}/watermarktemplate/{3}".format(API_HOST, API_VERSION, self.__hub__, name)
+        return api._get(url=url, auth=self.__auth__)
+
+    def se_qweszcdasf(self, **kwargs):
+        url = "http://{0}/{1}/hubs/{2}/security".format(API_HOST, API_VERSION, self.__hub__)
+        keyword = ["publishSecurity", "publishKey"]
+        encoded = normalize_data(kwargs, keyword)
+        return api._post(url=url, auth=self.__auth__, data=encoded)

@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
 
 import json
-import time
+
 
 import pili.api as api
+from .utils import urlsafe_base64_encode
+from .conf import API_HOST, API_VERSION
+from .utils import normalize_path, normalize_data
 
 
 class Stream(object):
@@ -27,35 +30,30 @@ class Stream(object):
             self.refresh()
         try:
             return self.__data__ if attr == "data" else self.__data__[attr]
-        except KeyError, e:
-            return e.message
+        except KeyError as e:
+            return e
 
     def __repr__(self):
         return self.to_json()
 
     # refresh 主动更新流信息，会产生一次rpc调用
     def refresh(self):
-        data = api.get_stream(self.__auth__, hub=self.hub, key=self.key)
+        key = urlsafe_base64_encode(self.key)
+        url = "http://%s/%s/hubs/%s/streams/%s" % (API_HOST, API_VERSION, self.hub, key)
+        data = api._get(url=url, auth=self.__auth__)
         self.__data__ = {}
-        for p in ["disabledTill", "converts"]:
-            self.__data__[p] = data[p] if p in data else None
+        for p in ["disabledTill", "converts", "createdAt", "updatedAt", "expireAt", "watermark", "converts"]:
+            self.__data__[p] = json.loads(data.text).get(p) if p in data.text else None
         self.__data__["key"] = self.key
         self.__data__["hub"] = self.hub
-        return self
+        return self.__data__
 
     # disable 禁用流，till Unix时间戳，在这之前流均不可用
     def disable(self, till=None):
-        if till is None:
-            till = -1
-        return api.disable_stream(self.__auth__, hub=self.hub, key=self.key, till=till)
-
-    # disabled 判断流是否被禁用
-    def disabled(self):
-        return self.disabledTill == -1 or self.disabledTill > int(time.time())
-
-    # enable 开启流
-    def enable(self):
-        return api.disable_stream(self.__auth__, hub=self.hub, key=self.key, till=0)
+        key = urlsafe_base64_encode(self.key)
+        url = "http://%s/%s/hubs/%s/streams/%s/disabled" % (API_HOST, API_VERSION, self.hub, key)
+        encoded = json.dumps({"disabledTill": till})
+        return api._post(url=url, data=encoded, auth=self.__auth__)
 
     """
     status 查询直播信息
@@ -69,31 +67,35 @@ class Stream(object):
             data: 正整数，数据帧率
     """
     def status(self):
-        res = api.get_status(self.__auth__, hub=self.hub, key=self.key)
-        return res
+        key = urlsafe_base64_encode(self.key)
+        url = "http://%s/%s/hubs/%s/streams/%s/live" % (API_HOST, API_VERSION, self.hub, key)
+        return api._get(url=url, auth=self.__auth__)
 
     """
     history 查询直播历史
     输入参数:
-        start_second: Unix时间戳，起始时间，可选，默认不限制起始时间
-        end_second: Unix时间戳，结束时间，可选，默认为当前时间
+        start: Unix时间戳，起始时间，可选，默认不限制起始时间
+        end: Unix时间戳，结束时间，可选，默认为当前时间
     返回值: 如下结构的数组
         start: Unix时间戳，直播开始时间
         end: Unix时间戳，直播结束时间
     """
-    def history(self, start_second=None, end_second=None):
-        res = api.get_history(self.__auth__, hub=self.hub, key=self.key, start=start_second, end=end_second)
-        return res["items"]
+    def history(self, **kwargs):
+        key = urlsafe_base64_encode(self.key)
+        keyword = ['start', 'end']
+        url = "http://{0}/{1}/hubs/{2}/streams/{3}/historyactivity?".format(API_HOST, API_VERSION, self.hub, key)
+        url = normalize_path(kwargs, keyword, url)
+        return api._get(url=url, auth=self.__auth__)
 
     # save_as等同于saveas接口，出于兼容考虑，暂时保留
-    def save_as(self, start_second=None, end_second=None, **kwargs):
-        return self.saveas(start_second, end_second, **kwargs)
+    def save_as(self, **kwargs):
+        return self.saveas(**kwargs)
 
     """
     saveas 保存直播回放到存储空间
     输入参数:
-        start_second: Unix时间戳，起始时间，可选，默认不限制起始时间
-        end_second: Unix时间戳，结束时间，可选，默认为当前时间
+        start: Unix时间戳，起始时间，可选，默认不限制起始时间
+        end: Unix时间戳，结束时间，可选，默认为当前时间
         fname: 保存的文件名，可选，不指定会随机生产
         format: 保存的文件格式，可选，默认为m3u8，如果指定其他格式则保存动作为异步模式
         pipeline: dora的私有队列，可选，不指定则使用默认队列
@@ -106,15 +108,12 @@ class Stream(object):
         fname: 保存到存储空间的文件名
         persistentID: 异步模式时，持久化异步处理任务ID，通常用不到该字段
     """
-    def saveas(self, start_second=None, end_second=None, **kwargs):
-        kwargs["hub"] = self.hub
-        kwargs["key"] = self.key
-        if start_second is not None:
-            kwargs["start"] = start_second
-        if end_second is not None:
-            kwargs["end"] = end_second
-        res = api.stream_saveas(self.__auth__, **kwargs)
-        return res
+    def saveas(self, **kwargs):
+        key = urlsafe_base64_encode(self.key)
+        url = "http://%s/%s/hubs/%s/streams/%s/saveas" % (API_HOST, API_VERSION, self.hub, key)
+        keyword = ['start', 'end', 'fname', 'format', 'pipeline', 'notify', 'expireDays']
+        encoded_data = normalize_data(kwargs, keyword)
+        return api._post(url=url, auth=self.__auth__, data=encoded_data)
 
     """
     snapshot 保存直播截图到存储空间
@@ -126,10 +125,11 @@ class Stream(object):
         fname: 保存到存储空间的文件名
     """
     def snapshot(self, **kwargs):
-        kwargs["hub"] = self.hub
-        kwargs["key"] = self.key
-        res = api.stream_snapshot(self.__auth__, **kwargs)
-        return res
+        keyword = ['time', 'fname', 'format']
+        encoded_data = normalize_data(kwargs, keyword)
+        key = urlsafe_base64_encode(self.key)
+        url = "http://%s/%s/hubs/%s/streams/%s/snapshot" % (API_HOST, API_VERSION, self.hub, key)
+        return api._post(url=url, auth=self.__auth__, data=encoded_data)
 
     """
     update_converts 更改流的转码规格
@@ -138,8 +138,10 @@ class Stream(object):
     返回值: 无
     """
     def update_converts(self, profiles=[]):
-        res = api.update_stream_converts(self.__auth__, hub=self.hub, key=self.key, profiles=profiles)
-        return res
+        key = urlsafe_base64_encode(self.key)
+        url = "http://%s/%s/hubs/%s/streams/%s/converts" % (API_HOST, API_VERSION, self.hub, key)
+        encoded_data = json.dumps({"converts": profiles})
+        return api._post(url=url, auth=self.__auth__, data=encoded_data)
 
     def to_json(self):
         return json.dumps(self.data)
