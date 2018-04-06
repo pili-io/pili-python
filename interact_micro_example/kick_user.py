@@ -17,6 +17,3 @@ resp = room.kickUser('room_name', 'admin_user')
 print(resp.status_code)
 print(resp.headers)
 print(resp.text)
-
-
-

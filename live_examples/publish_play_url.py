@@ -34,10 +34,10 @@ stream = hub.get(stream_name)
 
 print(rtmp_publish_url(domain, hub_name, stream_name, mac, expire))
 
-# print(rtmp_play_url(domain, hub_name, stream_name))
-#
-# print(hls_play_url(domain, hub_name, stream_name))
-#
-# print(hdl_play_url(domain, hub_name, stream_name))
-#
-# print(snapshot_play_url(domain, hub_name, stream_name))
+print(rtmp_play_url(domain, hub_name, stream_name))
+
+print(hls_play_url(domain, hub_name, stream_name))
+
+print(hdl_play_url(domain, hub_name, stream_name))
+
+print(snapshot_play_url(domain, hub_name, stream_name))

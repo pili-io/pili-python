@@ -26,5 +26,3 @@ resp = hub.batch_live_status(stream_lists)
 print(resp.status_code)
 print(resp.headers)
 print(resp.text)
-
-

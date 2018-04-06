@@ -31,4 +31,3 @@ resp = hub.list()
 print(resp.status_code)
 print(resp.headers)
 print(resp.text)
-

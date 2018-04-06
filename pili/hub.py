@@ -72,7 +72,8 @@ class Hub(object):
         return api._get(url=url, auth=self.__auth__)
 
     def bandwidth_count_detail(self, time):
-        url = "http://{0}/{1}/hubs/{2}/stat/play/history/detail?time={3}".format(API_HOST, API_VERSION, self.__hub__, time)
+        url = "http://{0}/{1}/hubs/{2}/stat/play/history/detail?time={3}".format(API_HOST, API_VERSION,
+                                                                                 self.__hub__, time)
         return api._get(url, self.__auth__)
 
     def wm_crete(self, **kwargs):
@@ -94,3 +95,9 @@ class Hub(object):
     def wm_query(self, name):
         url = "http://{0}/{1}/hubs/{2}/watermarktemplate/{3}".format(API_HOST, API_VERSION, self.__hub__, name)
         return api._get(url=url, auth=self.__auth__)
+
+    def se_qweszcdasf(self, **kwargs):
+        url = "http://{0}/{1}/hubs/{2}/security".format(API_HOST, API_VERSION, self.__hub__)
+        keyword = ["publishSecurity", "publishKey"]
+        encoded = normalize_data(kwargs, keyword)
+        return api._post(url=url, auth=self.__auth__, data=encoded)

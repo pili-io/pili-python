@@ -29,6 +29,3 @@ resp = stream.snapshot(time=1521710848, fname="123.jpg", format="jpg")
 print(resp.status_code)
 print(resp.headers)
 print(resp.text)
-
-
-

@@ -47,11 +47,11 @@ class TestHubCases(TestCase):
     def test_wm_create(self):
         test_name = "test" + str(int(time.time()))
         items = self.hub.wm_crete(name=test_name, comment="for_test1", left='50%',
-                    top='50%', width='10%', imageURL="http://omhrg3tgg.bkt.clouddn.com/413.png")
+                                  top='50%', width='10%', imageURL="http://omhrg3tgg.bkt.clouddn.com/413.png")
         self.assertEqual(items.status_code, 200)
         self.assertEqual(test_name, loads(items.text).get("name"))
         items1 = self.hub.wm_crete(name="test1", comment="for_test1", left='50%',
-                    top='50%', width='10%', imageURL="http://omhrg3tgg.bkt.clouddn.com/413.png")
+                                   top='50%', width='10%', imageURL="http://omhrg3tgg.bkt.clouddn.com/413.png")
         self.assertEqual(items1.status_code, 614)
 
     def test_wm_download(self):

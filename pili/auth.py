@@ -49,4 +49,3 @@ class Auth(object):
         headers.update({'Authorization': self.auth_interface_str(raw_str)})
         headers.update({'User-Agent': conf.API_USERAGENT})
         return headers
-

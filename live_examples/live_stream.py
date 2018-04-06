@@ -29,5 +29,3 @@ resp = stream.status()
 print(resp.status_code)
 print(resp.headers)
 print(resp.text)
-
-
